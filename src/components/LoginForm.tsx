@@ -47,6 +47,9 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                   Login
                 </button>
               </form>
+              <a href="/register" className="d-block text-center mt-3">
+                Don't have an account? Register
+              </a>
             </div>
           </div>
         </div>

@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import TicketsPage from "./pages/TicketsPage";
-import RegistrationForm from "./components/RegistrationForm";
 
-function App() {
+function Apps() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +16,7 @@ function App() {
         });
         if (response.ok) setIsLoggedIn(true);
       } catch (err) {
-        console.error("Session check failed:", err);
+  console.error("Session check failed:", err);
       }
     };
 
@@ -54,46 +46,25 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="container mt-5">
-        <h1 className="text-center mb-4">Ticketing System</h1>
+    <div className="container mt-5">
+      <h1 className="text-center mb-4">Ticketing System</h1>
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              !isLoggedIn ? (
-                <>
-                  <LoginForm onLogin={handleLogin} />
-                  {error && (
-                    <div
-                      className="alert alert-danger mt-3 text-center"
-                      role="alert"
-                    >
-                      {error}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Navigate to="/tickets" />
-              )
-            }
-          />
+      {!isLoggedIn ? (
+        <>
+          <LoginForm onLogin={handleLogin} />
+          {error && (
+            <div className="alert alert-danger mt-3 text-center" role="alert">
+              {error}
+            </div>
+          )}
+        </>
+      ) : (
+        <TicketsPage />
+      )}
 
-          <Route
-            path="/tickets"
-            element={isLoggedIn ? <TicketsPage /> : <Navigate to="/" />}
-          />
-
-          <Route 
-            path="/register"
-            element={<RegistrationForm onRegister= {() => {}} />}
-            />
-
-        </Routes>
-      </div>
-    </Router>
+      
+    </div>
   );
 }
 
-export default App;
+export default Apps;
