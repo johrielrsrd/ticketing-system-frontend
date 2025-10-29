@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import TicketsPage from "./pages/TicketsPage";
