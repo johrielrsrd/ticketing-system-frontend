@@ -1,3 +1,4 @@
+
 export type Ticket = {
   id: number;
   subject: string;
@@ -13,6 +14,8 @@ type TicketListProps = {
 
 function TicketList({ tickets }: TicketListProps) {
   return (
+    <div>
+      
     <ul>
       {tickets.map((ticket) => (
         <li
@@ -25,6 +28,7 @@ function TicketList({ tickets }: TicketListProps) {
         </li>
       ))}
     </ul>
+    </div>
   );
 }
 

@@ -8,6 +8,7 @@ import {
 import LoginForm from "./components/LoginForm";
 import TicketsPage from "./pages/TicketsPage";
 import RegistrationForm from "./components/RegistrationForm";
+import Header from "./components/Header";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -53,45 +54,54 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="container mt-5">
-        <h1 className="text-center mb-4">Ticketing System</h1>
-
-        <Routes>
-          <Route
-            path="/"
-            element={
-              !isLoggedIn ? (
-                <>
-                  <LoginForm onLogin={handleLogin} />
-                  {error && (
-                    <div
-                      className="alert alert-danger mt-3 text-center"
-                      role="alert"
-                    >
-                      {error}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Navigate to="/tickets" />
-              )
-            }
-          />
-
-          <Route
-            path="/tickets"
-            element={isLoggedIn ? <TicketsPage /> : <Navigate to="/" />}
-          />
-
-          <Route 
-            path="/register"
-            element={<RegistrationForm onRegister= {() => {}} />}
+    <div>
+      <Router>
+        <div className="container mt-5">
+          <h1 className="text-center mb-4">Ticketing System</h1>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                !isLoggedIn ? (
+                  <>
+                    <LoginForm onLogin={handleLogin} />
+                    {error && (
+                      <div
+                        className="alert alert-danger mt-3 text-center"
+                        role="alert"
+                      >
+                        {error}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Navigate to="/tickets" />
+                )
+              }
             />
 
-        </Routes>
-      </div>
-    </Router>
+            <Route
+              path="/tickets"
+              element={
+                isLoggedIn ? (
+                  <>
+                    <Header />
+                    <TicketsPage />
+                  </>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+
+            <Route
+              path="/register"
+              element={<RegistrationForm onRegister={() => {}} />}
+            />
+          </Routes>
+        </div>
+      </Router>
+    </div>
   );
 }
 
