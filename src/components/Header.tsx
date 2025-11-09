@@ -1,20 +1,24 @@
 import { useNavigate } from "react-router-dom";
 
-export function Header({ onLogout }: { onLogout?: () => void }) {
+type HeaderProps = {
+  onLogout: () => void;
+};
+
+export function Header({ onLogout }: HeaderProps) {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    fetch("http://localhost:8080/api/auth/logout", {
-      method: "POST",
-      credentials: "include", // so cookies/session are sent
-    })
-      .then((res) => res.text())
-      .then((msg) => console.log(msg));
-    navigate("/");
-  };
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:8080/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
-  const handleHome = () => {
-    navigate("/tickets");
+      onLogout();
+      navigate("/");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   return (
@@ -23,23 +27,17 @@ export function Header({ onLogout }: { onLogout?: () => void }) {
         <h1 className="text-xl font-bold">Ticketing System</h1>
         <div className="space-x-4">
           <button
-            onClick={handleHome}
+            onClick={() => navigate("/")}
             className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
           >
             Home
           </button>
-          <form
-            onSubmit={() => {
-              handleLogout();
-            }}
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
           >
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
-            >
-              Logout
-            </button>
-          </form>
+            Logout
+          </button>
         </div>
       </div>
     </header>

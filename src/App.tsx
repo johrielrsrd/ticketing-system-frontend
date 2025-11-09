@@ -85,7 +85,7 @@ function App() {
               element={
                 isLoggedIn ? (
                   <>
-                    <Header />
+                    <Header onLogout={() => setIsLoggedIn(false)}/>
                     <TicketsPage />
                   </>
                 ) : (
