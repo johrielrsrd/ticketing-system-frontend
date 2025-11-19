@@ -9,6 +9,7 @@ import LoginForm from "./components/LoginForm";
 import TicketsPage from "./pages/TicketsPage";
 import RegistrationForm from "./components/RegistrationForm";
 import Header from "./components/Header";
+import CsvUpload from "./components/CsvUpload";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -85,7 +86,8 @@ function App() {
               element={
                 isLoggedIn ? (
                   <>
-                    <Header onLogout={() => setIsLoggedIn(false)}/>
+                    <Header onLogout={() => setIsLoggedIn(false)} />
+                    <CsvUpload />
                     <TicketsPage />
                   </>
                 ) : (
