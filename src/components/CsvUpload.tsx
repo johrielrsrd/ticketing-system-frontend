@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export default function CsvUpload() {
   const [file, setFile] = useState<File | null>(null);
-  const [parsedData, setParsedData] = useState<any[]>([]);
+  const [uploadSummary, setUploadSummary] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadCsv = async () => {
@@ -23,16 +23,19 @@ export default function CsvUpload() {
         credentials: "include",
       });
 
+      const responseText = await response.text();
+
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+        throw new Error(responseText || "Upload failed");
       }
 
-      const data = await response.json();
-      setParsedData(data);
+      // Backend now returns a simple String summary like:
+      // "CSV import completed. Total rows: X, Inserted: Y, Updated: Z"
+      setUploadSummary(responseText);
 
     } catch (error: any) {
       console.error("CSV Upload error:", error);
+      setUploadSummary(null);
       alert("Upload failed: " + error.message);
 
     } finally {
@@ -60,17 +63,11 @@ export default function CsvUpload() {
         {isUploading ? "Uploading..." : "Upload CSV"}
       </button>
 
-      {/* Display parsed results */}
-      {parsedData.length > 0 && (
+      {/* Display upload summary from backend */}
+      {uploadSummary && (
         <div style={{ marginTop: "20px" }}>
-          <h4>Parsed CSV Data:</h4>
-          <ul>
-            {parsedData.map((ticket, index) => (
-              <li key={index}>
-                <strong>{ticket.subject}</strong> — {ticket.status} - {ticket.description}
-              </li>
-            ))}
-          </ul>
+          <h4>Upload Result:</h4>
+          <p>{uploadSummary}</p>
         </div>
       )}
     </div>

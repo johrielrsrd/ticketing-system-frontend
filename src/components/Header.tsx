@@ -24,7 +24,6 @@ export function Header({ onLogout }: HeaderProps) {
   return (
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">Ticketing System</h1>
         <div className="space-x-4">
           <button
             onClick={() => navigate("/")}
