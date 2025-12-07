@@ -9,12 +9,21 @@ interface Ticket {
   createdAt: string;
 }
 
+interface SolveRate {
+  solveRatePercentage: number;
+  solvedCount: number;
+  unsolvedCount: number;
+  totalCount: number;
+}
+
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [solveRate, setSolveRate] = useState<SolveRate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [hideClosedSolved, setHideClosedSolved] = useState(false);
 
   const fetchTickets = async () => {
     try {
@@ -40,6 +49,27 @@ export default function TicketsPage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSolveRate = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/analytics/solve-rate",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch solve rate data");
+      }
+
+      const data = await response.json();
+      setSolveRate(data);
+    } catch (err) {
+      console.error("Error fetching solve rate:", err);
     }
   };
 
@@ -83,6 +113,7 @@ export default function TicketsPage() {
 
   useEffect(() => {
     fetchTickets();
+    fetchSolveRate();
   }, []);
 
   if (loading)
@@ -103,10 +134,39 @@ export default function TicketsPage() {
       </div>
     );
 
+  const displayedTickets = hideClosedSolved
+    ? tickets.filter(
+        (ticket) => ticket.status !== "Closed" && ticket.status !== "Solved"
+      )
+    : tickets;
+
   return (
     <div className="container mt-5">
       <h2 className="mb-4 text-center">My Tickets</h2>
-      {tickets.length === 0 ? (
+      <div className="mb-3 text-end">
+        <div className="form-check form-check-inline">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="hideClosedSolved"
+            checked={hideClosedSolved}
+            onChange={(e) => setHideClosedSolved(e.target.checked)}
+          />
+          <label className="form-check-label" htmlFor="hideClosedSolved">
+            Hide Closed &amp; Solved
+          </label>
+        </div>
+      </div>
+      <div className="mb-3 text-end">
+        {solveRate && (
+          <div>
+            <strong>Solve Rate:</strong> {solveRate.solveRatePercentage}% (
+            {solveRate.solvedCount} solved out of {solveRate.totalCount} tickets
+            )
+          </div>
+        )}
+      </div>
+      {displayedTickets.length === 0 ? (
         <p className="text-center text-muted">No tickets found.</p>
       ) : (
         <div className="table-responsive">
@@ -152,7 +212,7 @@ export default function TicketsPage() {
               </tr>
             </thead>
             <tbody>
-              {tickets.map((ticket) => (
+              {displayedTickets.map((ticket) => (
                 <tr key={ticket.ticketId}>
                   <td>{ticket.ticketId}</td>
                   <td>{ticket.priority}</td>
@@ -176,7 +236,7 @@ export default function TicketsPage() {
                   <td>{ticket.subject}</td>
                   <td>{ticket.description}</td>
 
-                  <td>{new Date(ticket.createdAt).toLocaleString()}</td>
+                  <td>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
