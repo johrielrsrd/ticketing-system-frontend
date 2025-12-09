@@ -160,7 +160,7 @@ export default function TicketsPage() {
       <div className="mb-3 text-end">
         {solveRate && (
           <div>
-            <strong>Solve Rate:</strong> {solveRate.solveRatePercentage}% (
+            <strong>Solve Rate:</strong> {solveRate.solveRatePercentage.toFixed(2)}% (
             {solveRate.solvedCount} solved out of {solveRate.totalCount} tickets
             )
           </div>
