@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 type HeaderProps = {
   onLogout: () => void;
@@ -6,6 +7,32 @@ type HeaderProps = {
 
 export function Header({ onLogout }: HeaderProps) {
   const navigate = useNavigate();
+  const [user, setUser] = useState<{
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/users/me", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+          console.log("Fetched user info:", data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user info:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -13,32 +40,60 @@ export function Header({ onLogout }: HeaderProps) {
         method: "POST",
         credentials: "include",
       });
-
-      onLogout();
-      navigate("/");
     } catch (err) {
       console.error("Logout failed:", err);
+    } finally {
+      onLogout();
+      navigate("/");
     }
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="space-x-4">
-          <button
-            onClick={() => navigate("/")}
-            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
+    <header className="mb-4">
+      <nav className="d-flex justify-content-between align-items-center">
+        <div className="btn-group" role="group">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `btn ${isActive ? "btn-secondary" : "btn-outline-dark"}`
+            }
           >
             Home
-          </button>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
+          </NavLink>
+
+          <NavLink
+            to="/tickets"
+            end
+            className={({ isActive }) =>
+              `btn ${isActive ? "btn-secondary" : "btn-outline-dark"}`
+            }
           >
+            My Tickets
+          </NavLink>
+
+          <NavLink
+            to="/tickets/all"
+            className={({ isActive }) =>
+              `btn ${isActive ? "btn-secondary" : "btn-outline-dark"} `
+            }
+          >
+            All Tickets
+          </NavLink>
+        </div>
+
+        <div className="d-flex align-items-center gap-3">
+          {user && (
+            <span className="badge bg-success fs-6">
+              👤 {user.username} - {user.email}
+            </span>
+          )}
+
+          <button className="btn btn-danger" onClick={handleLogout}>
             Logout
           </button>
         </div>
-      </div>
+      </nav>
     </header>
   );
 }

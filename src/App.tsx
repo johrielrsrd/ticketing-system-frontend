@@ -54,6 +54,39 @@ function App() {
     }
   };
 
+  const handleRegister = async (
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
+    password: string
+  ) => {
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          username,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        setError("Registration successful! Please log in.");
+      } else {
+        const errorText = await response.text();
+        setError(errorText || "Registration failed");
+      }
+    } catch (err) {
+      setError("Network error " + err);
+    }
+  };
+
   return (
     <div>
       <Router>
@@ -88,7 +121,22 @@ function App() {
                   <>
                     <Header onLogout={() => setIsLoggedIn(false)} />
                     <CsvUpload />
-                    <TicketsPage />
+                    <TicketsPage mode="my-tickets" />
+                  </>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+
+            <Route
+              path="/tickets/all"
+              element={
+                isLoggedIn ? (
+                  <>
+                    <Header onLogout={() => setIsLoggedIn(false)} />
+                    <CsvUpload />
+                    <TicketsPage mode="all-tickets" />
                   </>
                 ) : (
                   <Navigate to="/" />
@@ -98,7 +146,19 @@ function App() {
 
             <Route
               path="/register"
-              element={<RegistrationForm onRegister={() => {}} />}
+              element={
+                <>
+                  <RegistrationForm onRegister={handleRegister} />
+                  {error && (
+                    <div
+                      className="alert alert-danger mt-3 text-center"
+                      role="alert"
+                    >
+                      {error}
+                    </div>
+                  )}
+                </>
+              }
             />
           </Routes>
         </div>

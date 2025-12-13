@@ -16,7 +16,11 @@ interface SolveRate {
   totalCount: number;
 }
 
-export default function TicketsPage() {
+type TicketsPageProps = {
+  mode?: "my-tickets" | "all-tickets";
+};
+
+export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [solveRate, setSolveRate] = useState<SolveRate | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,13 +31,16 @@ export default function TicketsPage() {
 
   const fetchTickets = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/tickets/my-tickets",
-        {
-          method: "GET",
-          credentials: "include", // use session cookie
-        }
-      );
+      setError(null);
+      const url =
+        mode === "my-tickets"
+          ? "http://localhost:8080/api/tickets/my-tickets"
+          : "http://localhost:8080/api/tickets";
+
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include", // use session cookie
+      });
 
       if (!response.ok) {
         throw new Error("Unauthorized or failed to fetch tickets");
@@ -112,9 +119,15 @@ export default function TicketsPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchTickets();
-    fetchSolveRate();
-  }, []);
+    
+    if (mode === "all-tickets") {
+      setSolveRate(null);
+    } else {
+      fetchSolveRate();
+    }
+  }, [mode]);
 
   if (loading)
     return (
@@ -142,7 +155,9 @@ export default function TicketsPage() {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center">My Tickets</h2>
+      <h2 className="mb-4 text-center">
+        {mode === "my-tickets" ? "My Tickets" : "All Tickets"}
+      </h2>
       <div className="mb-3 text-end">
         <div className="form-check form-check-inline">
           <input
@@ -160,9 +175,9 @@ export default function TicketsPage() {
       <div className="mb-3 text-end">
         {solveRate && (
           <div>
-            <strong>Solve Rate:</strong> {solveRate.solveRatePercentage.toFixed(2)}% (
-            {solveRate.solvedCount} solved out of {solveRate.totalCount} tickets
-            )
+            <strong>Solve Rate:</strong>{" "}
+            {solveRate.solveRatePercentage.toFixed(2)}% ({solveRate.solvedCount}{" "}
+            solved out of {solveRate.totalCount} tickets )
           </div>
         )}
       </div>
