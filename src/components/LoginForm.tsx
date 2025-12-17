@@ -14,45 +14,46 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-4">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h3 className="text-center mb-4">Login</h3>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="username" className="form-label"></label>
-                  <input
-                    id="username"
-                    type="text"
-                    className="form-control"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label"></label>
-                  <input
-                    id="password"
-                    type="password"
-                    className="form-control"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                  />
-                </div>
-                <button className="btn btn-primary w-100" type="submit">
-                  Login
-                </button>
-              </form>
-              <a href="/register" className="d-block text-center mt-3">
-                Don't have an account? Register
-              </a>
-            </div>
-          </div>
+    <div className="card border-0 shadow-sm">
+      <div className="card-body p-4 p-md-5">
+        <div className="text-center mb-4">
+          <h2 className="h4 mb-1">Log In</h2>
         </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              className="form-control"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+            />
+          </div>
+          <button className="btn btn-primary w-100" type="submit">
+            Login
+          </button>
+        </form>
+        <hr className="my-4" />
+        <a href="/register" className="d-block text-center text-decoration-none">
+          Don&apos;t have an account? <span className="fw-semibold">Register</span>
+        </a>
       </div>
     </div>
   );

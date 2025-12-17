@@ -88,82 +88,97 @@ function App() {
   };
 
   return (
-    <div>
-      <Router>
-        <div className="container mt-5">
-          <h1 className="text-center mb-4">Ticketing System</h1>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                !isLoggedIn ? (
-                  <>
-                    <LoginForm onLogin={handleLogin} />
-                    {error && (
-                      <div
-                        className="alert alert-danger mt-3 text-center"
-                        role="alert"
-                      >
-                        {error}
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            !isLoggedIn ? (
+              <div className="container py-5" style={{ maxWidth: 500 }}>
+                <h1 className="text-center mb-4">Ticketing System</h1>
+                <LoginForm onLogin={handleLogin} />
+                {error && (
+                  <div
+                    className="alert alert-danger mt-3 text-center"
+                    role="alert"
+                  >
+                    {error}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Navigate to="/tickets" />
+            )
+          }
+        />
+
+        <Route
+          path="/tickets"
+          element={
+            isLoggedIn ? (
+              <div className="d-flex" style={{ minHeight: "100vh", background: "#f8f9fa" }}>
+                <Header onLogout={() => setIsLoggedIn(false)} />
+                <main className="flex-grow-1">
+                  <div className="border-bottom bg-white px-4 py-3">
+                    <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                      <div className="fw-semibold">Tickets</div>
+                      <div>
+                        <CsvUpload/>
                       </div>
-                    )}
-                  </>
-                ) : (
-                  <Navigate to="/tickets" />
-                )
-              }
-            />
-
-            <Route
-              path="/tickets"
-              element={
-                isLoggedIn ? (
-                  <>
-                    <Header onLogout={() => setIsLoggedIn(false)} />
-                    <CsvUpload />
-                    <TicketsPage mode="my-tickets" />
-                  </>
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-
-            <Route
-              path="/tickets/all"
-              element={
-                isLoggedIn ? (
-                  <>
-                    <Header onLogout={() => setIsLoggedIn(false)} />
-                    <CsvUpload />
-                    <TicketsPage mode="all-tickets" />
-                  </>
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-
-            <Route
-              path="/register"
-              element={
-                <>
-                  <RegistrationForm onRegister={handleRegister} />
-                  {error && (
-                    <div
-                      className="alert alert-danger mt-3 text-center"
-                      role="alert"
-                    >
-                      {error}
                     </div>
-                  )}
-                </>
-              }
-            />
-          </Routes>
-        </div>
-      </Router>
-    </div>
+                  </div>
+                  <TicketsPage mode="my-tickets" />
+                </main>
+              </div>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        <Route
+          path="/tickets/all"
+          element={
+            isLoggedIn ? (
+              <div className="d-flex" style={{ minHeight: "100vh", background: "#f8f9fa" }}>
+                <Header onLogout={() => setIsLoggedIn(false)} />
+                <main className="flex-grow-1">
+                  <div className="border-bottom bg-white px-4 py-3">
+                    <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                      <div className="fw-semibold">All Tickets</div>
+                      <div>
+                        <CsvUpload />
+                      </div>
+                    </div>
+                  </div>
+                  <TicketsPage mode="all-tickets" />
+                </main>
+              </div>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <div className="container py-5" style={{ maxWidth: 720 }}>
+              <h1 className="text-center mb-4">Ticketing System</h1>
+              <RegistrationForm onRegister={handleRegister} />
+              {error && (
+                <div
+                  className="alert alert-danger mt-3 text-center"
+                  role="alert"
+                >
+                  {error}
+                </div>
+              )}
+            </div>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
