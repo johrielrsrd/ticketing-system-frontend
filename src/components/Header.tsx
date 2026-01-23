@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { buildApiUrl } from "../lib/api";
+import { fetchCurrentUser, logout } from "../api";
 
 type HeaderProps = {
   onLogout: () => void;
@@ -18,10 +18,7 @@ export function Header({ onLogout }: HeaderProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(buildApiUrl("/api/users/me"), {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetchCurrentUser();
         if (response.ok) {
           const data = await response.json();
           setUser(data);
@@ -37,10 +34,7 @@ export function Header({ onLogout }: HeaderProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch(buildApiUrl("/api/auth/logout"), {
-        method: "POST",
-        credentials: "include",
-      });
+      await logout();
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {

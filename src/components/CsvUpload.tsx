@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { buildApiUrl } from "../lib/api";
+import { uploadTicketsCsv } from "../api";
 
 export default function CsvUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -19,11 +19,7 @@ export default function CsvUpload() {
     try {
       setIsUploading(true);
 
-      const response = await fetch(buildApiUrl("/api/tickets/upload-csv"), {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      const response = await uploadTicketsCsv(formData);
 
       const responseText = await response.text();
 

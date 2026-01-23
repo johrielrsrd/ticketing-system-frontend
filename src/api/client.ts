@@ -5,3 +5,6 @@ const API_BASE_URL =
 
 export const buildApiUrl = (path: string) =>
   `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+
+export const apiFetch = (path: string, init?: RequestInit) =>
+  fetch(buildApiUrl(path), init);
