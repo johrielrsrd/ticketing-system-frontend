@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { buildApiUrl } from "../lib/api";
 
 interface Ticket {
   ticketId: number;
@@ -34,10 +35,9 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   const fetchTickets = async () => {
     try {
       setError(null);
-      const url =
-        mode === "my-tickets"
-          ? "http://localhost:8080/api/tickets/my-tickets"
-          : "http://localhost:8080/api/tickets";
+      const url = buildApiUrl(
+        mode === "my-tickets" ? "/api/tickets/my-tickets" : "/api/tickets"
+      );
 
       const response = await fetch(url, {
         method: "GET",
@@ -63,13 +63,10 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
 
   const fetchSolveRate = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/analytics/solve-rate",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(buildApiUrl("/api/analytics/solve-rate"), {
+        method: "GET",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch solve rate data");
