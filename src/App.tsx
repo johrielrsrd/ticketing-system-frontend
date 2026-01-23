@@ -10,6 +10,7 @@ import TicketsPage from "./pages/TicketsPage";
 import RegistrationForm from "./components/RegistrationForm";
 import Header from "./components/Header";
 import CsvUpload from "./components/CsvUpload";
+import { getSession, login, register } from "./api";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,10 +20,7 @@ function App() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/me", {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await getSession();
         if (response.ok) setIsLoggedIn(true);
       } catch (err) {
         console.error("Session check failed:", err);
@@ -36,12 +34,7 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await login(username, password);
 
       if (response.ok) {
         setIsLoggedIn(true);
@@ -64,17 +57,13 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          username,
-          password,
-        }),
-      });
+      const response = await register(
+        firstName,
+        lastName,
+        email,
+        username,
+        password
+      );
 
       if (response.ok) {
         setError("Registration successful! Please log in.");

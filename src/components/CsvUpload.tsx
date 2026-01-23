@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { uploadTicketsCsv } from "../api";
 
 export default function CsvUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -12,29 +13,10 @@ export default function CsvUpload() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
       setIsUploading(true);
 
-      const response = await fetch(
-        "http://localhost:8080/api/tickets/upload-csv",
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
-
-      const responseText = await response.text();
-
-      if (!response.ok) {
-        throw new Error(responseText || "Upload failed");
-      }
-
-      // Backend now returns a simple String summary like:
-      // "CSV import completed. Total rows: X, Inserted: Y, Updated: Z"
+      const responseText = await uploadTicketsCsv(file);
       setUploadSummary(responseText);
       setShowSummary(true);
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { fetchSolveRate, fetchTickets } from "../api";
 
 interface Ticket {
   ticketId: number;
@@ -31,18 +32,10 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const fetchTickets = async () => {
+  const loadTickets = async () => {
     try {
       setError(null);
-      const url =
-        mode === "my-tickets"
-          ? "http://localhost:8080/api/tickets/my-tickets"
-          : "http://localhost:8080/api/tickets";
-
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include", // use session cookie
-      });
+      const response = await fetchTickets(mode);
 
       if (!response.ok) {
         throw new Error("Unauthorized or failed to fetch tickets");
@@ -61,15 +54,9 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
     }
   };
 
-  const fetchSolveRate = async () => {
+  const loadSolveRate = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/analytics/solve-rate",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetchSolveRate();
 
       if (!response.ok) {
         throw new Error("Failed to fetch solve rate data");
@@ -141,12 +128,12 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
 
   useEffect(() => {
     setLoading(true);
-    fetchTickets();
+    loadTickets();
 
     if (mode === "all-tickets") {
       setSolveRate(null);
     } else {
-      fetchSolveRate();
+      loadSolveRate();
     }
   }, [mode]);
 
