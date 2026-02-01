@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { type LoginCredentials } from "@/features/auth/hooks/useLogin.ts";
 
 type LoginFormProps = {
-onLogin: (credentials: LoginCredentials) => void;
-isLoading: boolean;
+  onLogin: (credentials: LoginCredentials) => void;
+  isLoading: boolean;
 };
 
-export function LoginForm({ onLogin, isLoading }: LoginFormProps) {
-  const [ username, setUsername ] = useState("");
-  const [ password, setPassword ] = useState("");
+const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +32,6 @@ export function LoginForm({ onLogin, isLoading }: LoginFormProps) {
               className="form-control"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
             />
           </div>
           <div className="mb-3">
@@ -45,20 +44,27 @@ export function LoginForm({ onLogin, isLoading }: LoginFormProps) {
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={isLoading}
+          >
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <hr className="my-4" />
-        <a href="/register" className="d-block text-center text-decoration-none">
-          Don&apos;t have an account? <span className="fw-semibold">Register</span>
+        <a
+          href="/register"
+          className="d-block text-center text-decoration-none"
+        >
+          Don&apos;t have an account?{" "}
+          <span className="fw-semibold">Register</span>
         </a>
       </div>
     </div>
   );
-}
+};
 
 export default LoginForm;

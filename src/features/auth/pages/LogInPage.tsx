@@ -1,7 +1,7 @@
+import LoginForm from "@/features/auth/components/LoginForm";
 import { useLogin } from "@/features/auth/hooks/useLogin.ts";
-import { LoginForm } from "@/features/components/LoginForm.tsx";
 
-export function LogInPage() {
+const LogInPage = () => {
   const { handleLogin, loginError, isLoading } = useLogin();
 
   return (
@@ -15,4 +15,6 @@ export function LogInPage() {
       )}
     </div>
   );
-}
+};
+
+export default LogInPage;

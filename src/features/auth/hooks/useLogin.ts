@@ -26,12 +26,15 @@ export const useLogin = () => {
       } else {
         const errorText = await response.text();
         setLoginError(errorText || "Invalid username or password");
+        setIsLoading(false);
       }
     } catch (err) {
       if (err instanceof Error) {
         setLoginError(err.message);
+        setIsLoading(false);
       } else {
         setLoginError("Network error");
+        setIsLoading(false);
       }
     }
   };

@@ -1,25 +1,25 @@
 import TicketsPage from "@/pages/TicketsPage";
-import RegistrationForm from "@/components/RegistrationForm";
 import Header from "@/components/Header";
 import CsvUpload from "@/components/CsvUpload";
-import { fetchSession, logout, register } from "@/api";
+import { logout } from "@/api";
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "@/core/store/store.ts";
 import { loginSuccess, logoutSuccess } from "@/features/auth/store/authSlice";
-import { LogInPage } from "@/features/auth/pages/LogInPage";
 
-export const AppRoutes = () => {
+import { fetchSession } from "@/features/auth/services/authApi.ts";
+import LogInPage from "@/features/auth/pages/LogInPage";
+import RegistrationPage from "@/features/auth/pages/RegistrationPage";
+
+const AppRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
   const dispatch = useDispatch();
-  const [error, setError] = useState<string | null>(null);
   const [isSessionLoading, setIsSessionLoading] = useState(true);
 
-  
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -28,8 +28,7 @@ export const AppRoutes = () => {
         if (response.ok) {
           const data = await response.json();
           dispatch(loginSuccess(data.username));
-        } 
-
+        }
       } catch (err) {
         console.error("Error checking session:", err);
       } finally {
@@ -39,7 +38,6 @@ export const AppRoutes = () => {
 
     checkSession();
   }, [dispatch]);
-
 
   if (isSessionLoading) {
     return (
@@ -55,41 +53,14 @@ export const AppRoutes = () => {
     );
   }
 
-  const handleRegister = async (
-    firstName: string,
-    lastName: string,
-    email: string,
-    username: string,
-    password: string,
-  ) => {
-    setError(null);
-
-    try {
-      const response = await register({
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-      });
-
-      if (response.ok) {
-        setError("Registration successful! Please log in.");
-      } else {
-        const errorText = await response.text();
-        setError(errorText || "Registration failed");
-      }
-    } catch (err) {
-      setError("Network error " + err);
-    }
-  };
-
   return (
     <Routes>
       <Route
         path="/"
         element={!isAuthenticated ? <LogInPage /> : <Navigate to="/tickets" />}
       />
+
+      <Route path="/register" element={<RegistrationPage />} />
 
       <Route
         path="/tickets"
@@ -154,21 +125,8 @@ export const AppRoutes = () => {
           )
         }
       />
-
-      <Route
-        path="/register"
-        element={
-          <div className="container py-5" style={{ maxWidth: 720 }}>
-            <h1 className="text-center mb-4">Ticketing System</h1>
-            <RegistrationForm onRegister={handleRegister} />
-            {error && (
-              <div className="alert alert-danger mt-3 text-center" role="alert">
-                {error}
-              </div>
-            )}
-          </div>
-        }
-      />
     </Routes>
   );
 };
+
+export default AppRoutes;
