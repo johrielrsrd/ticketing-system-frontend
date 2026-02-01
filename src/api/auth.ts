@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiFetch } from "../core/services/api";
 
 type RegisterPayload = {
   firstName: string;

@@ -1,16 +1,18 @@
 import React, { useState } from "react";
+import { type LoginCredentials } from "@/features/auth/hooks/useLogin.ts";
 
 type LoginFormProps = {
-  onLogin: (username: string, password: string) => void;
+onLogin: (credentials: LoginCredentials) => void;
+isLoading: boolean;
 };
 
-export function LoginForm({ onLogin }: LoginFormProps) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+export function LoginForm({ onLogin, isLoading }: LoginFormProps) {
+  const [ username, setUsername ] = useState("");
+  const [ password, setPassword ] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(username, password);
+    onLogin({ username, password });
   };
 
   return (
@@ -46,8 +48,8 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               placeholder="Password"
             />
           </div>
-          <button className="btn btn-primary w-100" type="submit">
-            Login
+          <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <hr className="my-4" />

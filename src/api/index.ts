@@ -1,5 +1,5 @@
 export * from "./analytics";
 export * from "./auth";
-export * from "./client";
+export * from "../core/services/api";
 export * from "./tickets";
 export * from "./users";

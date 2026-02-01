@@ -1,54 +1,59 @@
-import LoginForm from "@/components/LoginForm";
 import TicketsPage from "@/pages/TicketsPage";
 import RegistrationForm from "@/components/RegistrationForm";
 import Header from "@/components/Header";
 import CsvUpload from "@/components/CsvUpload";
-import { fetchSession, login, logout, register } from "@/api";
+import { fetchSession, logout, register } from "@/api";
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "@/core/store/store.ts";
 import { loginSuccess, logoutSuccess } from "@/features/auth/store/authSlice";
+import { LogInPage } from "@/features/auth/pages/LogInPage";
 
 export const AppRoutes = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
   const dispatch = useDispatch();
-
   const [error, setError] = useState<string | null>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
 
-  // 🔹 Check if user already logged in (session cookie still valid)
+  
   useEffect(() => {
     const checkSession = async () => {
       try {
         const response = await fetchSession();
+
         if (response.ok) {
-          dispatch(loginSuccess("ExistingUser"));
-        }
+          const data = await response.json();
+          dispatch(loginSuccess(data.username));
+        } 
+
       } catch (err) {
-        console.error("Session check failed:", err);
+        console.error("Error checking session:", err);
+      } finally {
+        setIsSessionLoading(false);
       }
     };
 
     checkSession();
-  }, []);
+  }, [dispatch]);
 
-  const handleLogin = async (username: string, password: string) => {
-    setError(null);
 
-    try {
-      const response = await login(username, password);
-
-      if (response.ok) {
-        dispatch(loginSuccess(username));
-      } else {
-        const errorText = await response.text();
-        setError(errorText || "Invalid username or password");
-      }
-    } catch (err) {
-      setError("Network error " + err);
-    }
-  };
+  if (isSessionLoading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
+        <div className="text-center">
+          <div className="spinner-border" role="status" aria-hidden="true" />
+          <div className="mt-2">Checking session…</div>
+        </div>
+      </div>
+    );
+  }
 
   const handleRegister = async (
     firstName: string,
@@ -83,30 +88,13 @@ export const AppRoutes = () => {
     <Routes>
       <Route
         path="/"
-        element={
-          !isLoggedIn ? (
-            <div className="container py-5" style={{ maxWidth: 500 }}>
-              <h1 className="text-center mb-4">Ticketing System</h1>
-              <LoginForm onLogin={handleLogin} />
-              {error && (
-                <div
-                  className="alert alert-danger mt-3 text-center"
-                  role="alert"
-                >
-                  {error}
-                </div>
-              )}
-            </div>
-          ) : (
-            <Navigate to="/tickets" />
-          )
-        }
+        element={!isAuthenticated ? <LogInPage /> : <Navigate to="/tickets" />}
       />
 
       <Route
         path="/tickets"
         element={
-          isLoggedIn ? (
+          isAuthenticated ? (
             <div
               className="d-flex"
               style={{ minHeight: "100vh", background: "#f8f9fa" }}
@@ -138,7 +126,7 @@ export const AppRoutes = () => {
       <Route
         path="/tickets/all"
         element={
-          isLoggedIn ? (
+          isAuthenticated ? (
             <div
               className="d-flex"
               style={{ minHeight: "100vh", background: "#f8f9fa" }}

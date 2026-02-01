@@ -1,12 +1,12 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 type AuthState = {
-    isLoggedIn: boolean;
+    isAuthenticated: boolean;
     username: string | null;
 };
 
 const initialState: AuthState = {
-    isLoggedIn: false,
+    isAuthenticated: false,
     username: null,
 };
 
@@ -15,11 +15,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess(state, action: PayloadAction<string>) {
-      state.isLoggedIn = true;
+      state.isAuthenticated = true;
       state.username = action.payload;
     },
     logoutSuccess(state) {
-      state.isLoggedIn = false;
+      state.isAuthenticated = false;
       state.username = null;
     },
   },
