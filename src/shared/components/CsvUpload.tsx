@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { uploadTicketsCsv } from "../api";
+import { uploadTicketsCsv } from "../../api";
 
 export default function CsvUpload() {
   const [file, setFile] = useState<File | null>(null);

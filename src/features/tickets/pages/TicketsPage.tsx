@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchSolveRate, fetchTickets } from "../api";
+import { fetchSolveRate, fetchTickets } from "../../../api";
 
 interface Ticket {
   ticketId: number;

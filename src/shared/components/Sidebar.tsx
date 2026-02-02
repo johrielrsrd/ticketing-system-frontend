@@ -1,12 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchCurrentUser, logout } from "../api";
+import { fetchCurrentUser, logout } from "../../api";
+import { logoutSuccess } from "@/features/auth/store/authSlice";
+import { useDispatch } from "react-redux";
 
-type HeaderProps = {
-  onLogout: () => void;
-};
-
-export function Header({ onLogout }: HeaderProps) {
+export function Sidebar() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user, setUser] = useState<{
     username: string;
@@ -35,10 +34,10 @@ export function Header({ onLogout }: HeaderProps) {
   const handleLogout = async () => {
     try {
       await logout();
+      dispatch(logoutSuccess());
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
-      onLogout();
       navigate("/");
     }
   };
@@ -140,4 +139,4 @@ export function Header({ onLogout }: HeaderProps) {
   );
 }
 
-export default Header;
+export default Sidebar;

@@ -1,16 +1,11 @@
-import TicketsPage from "@/pages/TicketsPage";
-import Header from "@/components/Header";
-import CsvUpload from "@/components/CsvUpload";
-import { logout } from "@/api";
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "@/core/store/store.ts";
-import { logoutSuccess } from "@/features/auth/store/authSlice";
-
 import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
+import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
+import TicketsPage from "@/features/tickets/pages/TicketsPage";
 import { useSessionChecker as checkSession } from "@/features/auth/hooks/useSessionChecker";
 
 export const AppRoutes = () => {
@@ -51,28 +46,9 @@ export const AppRoutes = () => {
         path="/tickets"
         element={
           isAuthenticated ? (
-            <div
-              className="d-flex"
-              style={{ minHeight: "100vh", background: "#f8f9fa" }}
-            >
-              <Header
-                onLogout={() => {
-                  logout();
-                  dispatch(logoutSuccess());
-                }}
-              />
-              <main className="flex-grow-1">
-                <div className="border-bottom bg-white px-4 py-3">
-                  <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                    <div className="fw-semibold">Tickets</div>
-                    <div>
-                      <CsvUpload />
-                    </div>
-                  </div>
-                </div>
-                <TicketsPage mode="my-tickets" />
-              </main>
-            </div>
+            <TicketViewsLayout>
+              <TicketsPage mode="my-tickets" />
+            </TicketViewsLayout>
           ) : (
             <Navigate to="/" />
           )
@@ -83,28 +59,9 @@ export const AppRoutes = () => {
         path="/tickets/all"
         element={
           isAuthenticated ? (
-            <div
-              className="d-flex"
-              style={{ minHeight: "100vh", background: "#f8f9fa" }}
-            >
-              <Header
-                onLogout={() => {
-                  logout();
-                  dispatch(logoutSuccess());
-                }}
-              />
-              <main className="flex-grow-1">
-                <div className="border-bottom bg-white px-4 py-3">
-                  <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                    <div className="fw-semibold">All Tickets</div>
-                    <div>
-                      <CsvUpload />
-                    </div>
-                  </div>
-                </div>
-                <TicketsPage mode="all-tickets" />
-              </main>
-            </div>
+            <TicketViewsLayout>
+              <TicketsPage mode="all-tickets" />
+            </TicketViewsLayout>
           ) : (
             <Navigate to="/" />
           )
