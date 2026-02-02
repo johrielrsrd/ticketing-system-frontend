@@ -2,7 +2,7 @@ import AuthLayout from "@/shared/layouts/AuthLayout";
 import RegistrationForm from "@/features/auth/components/RegistrationForm";
 import { useRegister } from "@/features/auth/hooks/useRegister";
 
-const RegistrationPage = () => {
+export const RegistrationPage = () => {
   const { handleRegister, registrationError } = useRegister();
 
   return (
@@ -16,5 +16,3 @@ const RegistrationPage = () => {
     </AuthLayout>
   );
 };
-
-export default RegistrationPage;

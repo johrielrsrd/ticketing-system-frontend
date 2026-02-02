@@ -7,13 +7,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "@/core/store/store.ts";
-import { loginSuccess, logoutSuccess } from "@/features/auth/store/authSlice";
+import { logoutSuccess } from "@/features/auth/store/authSlice";
 
-import { fetchSession } from "@/features/auth/services/authApi.ts";
-import LogInPage from "@/features/auth/pages/LogInPage";
-import RegistrationPage from "@/features/auth/pages/RegistrationPage";
+import { LogInPage } from "@/features/auth/pages/LogInPage";
+import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
+import { useSessionChecker as checkSession } from "@/features/auth/hooks/useSessionChecker";
 
-const AppRoutes = () => {
+export const AppRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
@@ -21,22 +21,7 @@ const AppRoutes = () => {
   const [isSessionLoading, setIsSessionLoading] = useState(true);
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetchSession();
-
-        if (response.ok) {
-          const data = await response.json();
-          dispatch(loginSuccess(data.username));
-        }
-      } catch (err) {
-        console.error("Error checking session:", err);
-      } finally {
-        setIsSessionLoading(false);
-      }
-    };
-
-    checkSession();
+    checkSession({ dispatch, setIsSessionLoading });
   }, [dispatch]);
 
   if (isSessionLoading) {
@@ -128,5 +113,3 @@ const AppRoutes = () => {
     </Routes>
   );
 };
-
-export default AppRoutes;

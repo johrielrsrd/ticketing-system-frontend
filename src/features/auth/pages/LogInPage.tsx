@@ -2,7 +2,7 @@ import AuthLayout from "@/shared/layouts/AuthLayout";
 import LoginForm from "@/features/auth/components/LoginForm";
 import { useLogin } from "@/features/auth/hooks/useLogin.ts";
 
-const LogInPage = () => {
+export const LogInPage = () => {
   const { handleLogin, loginError, isLoading } = useLogin();
 
   return (
@@ -16,5 +16,3 @@ const LogInPage = () => {
     </AuthLayout>
   );
 };
-
-export default LogInPage;
