@@ -1,5 +1,5 @@
-import AuthLayout from "@/shared/layouts/AuthLayout";
-import RegistrationForm from "@/features/auth/components/RegistrationForm";
+import { AuthLayout } from "@/shared/layouts/AuthLayout";
+import { RegistrationForm } from "@/features/auth/components/RegistrationForm";
 import { useRegister } from "@/features/auth/hooks/useRegister";
 
 export const RegistrationPage = () => {

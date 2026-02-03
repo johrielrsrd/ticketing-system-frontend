@@ -1,23 +1,17 @@
-import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { type RootState } from "@/core/store/store.ts";
 import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
 import TicketsPage from "@/features/tickets/pages/TicketsPage";
-import { useSessionChecker as checkSession } from "@/features/auth/hooks/useSessionChecker";
+import { useSessionChecker } from "@/features/auth/hooks/useSessionChecker";
 
 export const AppRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
-  const dispatch = useDispatch();
-  const [isSessionLoading, setIsSessionLoading] = useState(true);
-
-  useEffect(() => {
-    checkSession({ dispatch, setIsSessionLoading });
-  }, [dispatch]);
+  const { isSessionLoading } = useSessionChecker();
 
   if (isSessionLoading) {
     return (

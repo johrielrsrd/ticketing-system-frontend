@@ -13,7 +13,7 @@ export const TicketViewsLayout = ({ children }: TicketViewsLayoutProps) => {
       style={{ minHeight: "100vh", background: "#f8f9fa" }}
     >
       <Sidebar />
-      <main className="flex-grow-1">
+      <div className="flex-grow-1">
         <div className="border-bottom bg-white px-4 py-3">
           <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
             <div></div>
@@ -23,7 +23,7 @@ export const TicketViewsLayout = ({ children }: TicketViewsLayoutProps) => {
           </div>
         </div>
         {children}
-      </main>
+      </div>
     </div>
   );
 };

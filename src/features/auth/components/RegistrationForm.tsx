@@ -5,7 +5,7 @@ type RegistrationFormProps = {
   onRegister: (credentials: RegistrationPayload) => void;
 };
 
-const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
+export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -95,5 +95,3 @@ const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
     </div>
   );
 };
-
-export default RegistrationForm;

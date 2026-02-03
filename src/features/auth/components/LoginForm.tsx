@@ -6,7 +6,7 @@ type LoginFormProps = {
   isLoading: boolean;
 };
 
-const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
+export const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -66,5 +66,3 @@ const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
     </div>
   );
 };
-
-export default LoginForm;
