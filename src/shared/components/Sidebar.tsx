@@ -1,7 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchCurrentUser, logout } from "../../api";
+import { fetchCurrentUser } from "@/features/users/services/usersApi";
 import { logoutSuccess } from "@/features/auth/store/authSlice";
+import { logout } from "@/features/auth/services/authApi";
 import { useDispatch } from "react-redux";
 
 export function Sidebar() {
@@ -35,6 +36,7 @@ export function Sidebar() {
     try {
       await logout();
       dispatch(logoutSuccess());
+      console.log("User logged out successfully");
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
@@ -49,13 +51,16 @@ export function Sidebar() {
     >
       {/* Brand / Title */}
       <div className="px-3 py-3 border-bottom">
-        <div className="fw-semibold">Ticketing</div>
-        <div className="text-muted small">Support Desk</div>
+        <div className="fw-semibold">Ticketing Lite</div>
+        <div className="text-muted small">Support System</div>
       </div>
 
       {/* Nav / Views */}
       <nav className="px-2 py-3 flex-grow-1">
-        <div className="text-uppercase text-muted small px-2 mb-2" style={{ letterSpacing: 0.6 }}>
+        <div
+          className="text-uppercase text-muted small px-2 mb-2"
+          style={{ letterSpacing: 0.6 }}
+        >
           Views
         </div>
 
@@ -107,12 +112,16 @@ export function Sidebar() {
 
         {/* Placeholder for future views */}
         <div className="mt-4 px-2">
-          <div className="text-uppercase text-muted small mb-2" style={{ letterSpacing: 0.6 }}>
+          <div
+            className="text-uppercase text-muted small mb-2"
+            style={{ letterSpacing: 0.6 }}
+          >
             Future Views
           </div>
           <div className="text-muted small">
             Add presets like <span className="fw-semibold">Unassigned</span>,
-            <span className="fw-semibold"> Overdue</span>, <span className="fw-semibold">High Priority</span>.
+            <span className="fw-semibold"> Overdue</span>,{" "}
+            <span className="fw-semibold">High Priority</span>.
           </div>
         </div>
       </nav>
@@ -125,7 +134,9 @@ export function Sidebar() {
               <span className="badge text-bg-light border text-dark">👤</span>
               <div className="flex-grow-1" style={{ minWidth: 0 }}>
                 <div className="fw-semibold text-truncate">{user.username}</div>
-                <div className="text-muted small text-truncate">{user.email}</div>
+                <div className="text-muted small text-truncate">
+                  {user.email}
+                </div>
               </div>
             </div>
           </div>

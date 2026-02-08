@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { register } from "@/api";
+import { register } from "@/features/auth/services/authApi";
 
 export type RegistrationPayload = {
   firstName: string;

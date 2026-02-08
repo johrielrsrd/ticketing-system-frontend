@@ -1,73 +1,26 @@
-import { useEffect, useState } from "react";
-import { fetchSolveRate, fetchTickets } from "../../../api";
-
-interface Ticket {
-  ticketId: number;
-  subject: string;
-  description: string;
-  status: string;
-  priority: string;
-  createdAt: string;
-}
-
-interface SolveRate {
-  solveRatePercentage: number;
-  solvedCount: number;
-  unsolvedCount: number;
-  totalCount: number;
-}
-
-type TicketsPageProps = {
-  mode?: "my-tickets" | "all-tickets";
-};
+import { useState } from "react";
+import { type TicketsPageProps, type Ticket } from "../types/types";
+import { useTicketsData } from "../hooks/useTicketsData";
+import { useTicketsFilter } from "../hooks/useTicketsFilter";
+import { useSolveRate } from "../../analytics/hooks/useSolveRate";
 
 export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [solveRate, setSolveRate] = useState<SolveRate | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof Ticket | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [hideClosedSolved, setHideClosedSolved] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
 
-  const loadTickets = async () => {
-    try {
-      setError(null);
-      const response = await fetchTickets(mode);
-
-      if (!response.ok) {
-        throw new Error("Unauthorized or failed to fetch tickets");
-      }
-
-      const data = await response.json();
-      setTickets(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadSolveRate = async () => {
-    try {
-      const response = await fetchSolveRate();
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch solve rate data");
-      }
-
-      const data = await response.json();
-      setSolveRate(data);
-    } catch (err) {
-      console.error("Error fetching solve rate:", err);
-    }
-  };
+  const { tickets, loading, error, setTickets } = useTicketsData(mode);
+  const {
+    displayedTickets,
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    hideClosedSolved,
+    setHideClosedSolved,
+  } = useTicketsFilter({
+    tickets,
+  });
+  const { solveRate } = useSolveRate({ enabled: mode !== "all-tickets" });
 
   const statusBadgeClass = (status: string) => {
     switch (status) {
@@ -126,21 +79,13 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
     setTickets(sorted);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    loadTickets();
-
-    if (mode === "all-tickets") {
-      setSolveRate(null);
-    } else {
-      loadSolveRate();
-    }
-  }, [mode]);
-
   if (loading)
     return (
       <div className="p-4">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "40vh" }}>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "40vh" }}
+        >
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
@@ -157,23 +102,6 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
       </div>
     );
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-
-  const displayedTickets = tickets
-    .filter((ticket) => {
-      if (!hideClosedSolved) return true;
-      return ticket.status !== "Closed" && ticket.status !== "Solved";
-    })
-    .filter((ticket) => {
-      if (!statusFilter) return true;
-      return ticket.status === statusFilter;
-    })
-    .filter((ticket) => {
-      if (!normalizedQuery) return true;
-      const haystack = `${ticket.subject} ${ticket.description}`.toLowerCase();
-      return haystack.includes(normalizedQuery);
-    });
-
   return (
     <div className="p-4 w-100">
       {/* Header / Toolbar */}
@@ -184,8 +112,12 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
           </div>
           {solveRate && (
             <div className="text-muted small">
-              <strong className="text-dark">Solve Rate:</strong> {solveRate.solveRatePercentage.toFixed(2)}%
-              <span className="text-muted"> ({solveRate.solvedCount} solved out of {solveRate.totalCount})</span>
+              <strong className="text-dark">Solve Rate:</strong>{" "}
+              {solveRate.solveRatePercentage.toFixed(2)}%
+              <span className="text-muted">
+                {" "}
+                ({solveRate.solvedCount} solved out of {solveRate.totalCount})
+              </span>
             </div>
           )}
         </div>
@@ -235,7 +167,10 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
           {displayedTickets.length === 0 ? (
             <div className="p-4 text-center text-muted">No tickets found.</div>
           ) : (
-            <div className="table-responsive" style={{ maxHeight: "78vh", overflowY: "auto" }}>
+            <div
+              className="table-responsive"
+              style={{ maxHeight: "78vh", overflowY: "auto" }}
+            >
               <table className="table table-hover align-middle mb-0">
                 <thead className="sticky-top bg-white border-bottom">
                   <tr className="small text-uppercase text-muted">
@@ -283,17 +218,25 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
                       <td className="px-3 text-nowrap">{ticket.ticketId}</td>
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
                       <td className="px-3 text-nowrap">
-                        <span className={`badge rounded-pill px-2 py-1 ${statusBadgeClass(ticket.status)}`}>
+                        <span
+                          className={`badge rounded-pill px-2 py-1 ${statusBadgeClass(ticket.status)}`}
+                        >
                           {ticket.status}
                         </span>
                       </td>
                       <td className="px-3">
-                        <div className="fw-semibold text-truncate" style={{ maxWidth: 360 }}>
+                        <div
+                          className="fw-semibold text-truncate"
+                          style={{ maxWidth: 360 }}
+                        >
                           {ticket.subject}
                         </div>
                       </td>
                       <td className="px-3">
-                        <div className="text-muted text-truncate" style={{ maxWidth: 520 }}>
+                        <div
+                          className="text-muted text-truncate"
+                          style={{ maxWidth: 520 }}
+                        >
                           {ticket.description}
                         </div>
                       </td>

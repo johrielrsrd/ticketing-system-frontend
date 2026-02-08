@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "@/api";
+import { login } from "@/features/auth/services/authApi";
 import { loginSuccess } from "@/features/auth/store/authSlice";
 
 export type LoginCredentials = {

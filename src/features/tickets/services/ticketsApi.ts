@@ -1,8 +1,6 @@
-import { apiFetch } from "../core/services/api";
+import { apiFetch } from "../../../core/services/api";
 
-type TicketsMode = "my-tickets" | "all-tickets";
-
-export const fetchTickets = (mode: TicketsMode) =>
+export const fetchTickets = (mode: "my-tickets" | "all-tickets") =>
   apiFetch(mode === "my-tickets" ? "/api/tickets/my-tickets" : "/api/tickets", {
     method: "GET",
     credentials: "include",
