@@ -30,7 +30,7 @@ export const useLogin = () => {
       }
     } catch (err) {
       if (err instanceof Error) {
-        setLoginError(err.message);
+        setLoginError("Log In Error: " + err.message);
         setIsLoading(false);
       } else {
         setLoginError("Network error");

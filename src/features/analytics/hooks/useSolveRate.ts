@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { fetchSolveRate } from "@/features/analytics/services/analyticsApi";
-import { type SolveRateData, type UseSolveRateProps } from "../types/types";
+
+export type UseSolveRateProps = {
+  enabled?: boolean;
+};
+
+export type SolveRateData = {
+  solveRatePercentage: number;
+  solvedCount: number;
+  totalCount: number;
+};
 
 export const useSolveRate = ({ enabled = true }: UseSolveRateProps = {}) => {
   const [solveRate, setSolveRate] = useState<SolveRateData | null>(null);
@@ -37,4 +46,4 @@ export const useSolveRate = ({ enabled = true }: UseSolveRateProps = {}) => {
   }, [enabled]);
 
   return { solveRate };
-}
+};
