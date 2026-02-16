@@ -11,11 +11,8 @@ export const AppRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
-  const isSessionLoading = useSelector(
-    (state: RootState) => state.auth.isLoading,
-  );
 
-  useSessionChecker();
+  const { isSessionLoading } = useSessionChecker();
 
   if (isSessionLoading) {
     return (
