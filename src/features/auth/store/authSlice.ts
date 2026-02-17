@@ -1,9 +1,8 @@
 import {
   createAsyncThunk,
   createSlice,
-  type PayloadAction,
 } from "@reduxjs/toolkit";
-import { fetchSession } from "../services/authApi";
+import { fetchSession, login } from "../services/authApi";
 
 type User = {
   username: string;
@@ -15,14 +14,16 @@ type User = {
 type AuthState = {
   User: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
+  isSessionLoading: boolean;
+  isLoginLoading: boolean;
   error: string | null;
 };
 
 const initialState: AuthState = {
   User: null,
   isAuthenticated: false,
-  isLoading: false,
+  isSessionLoading: false,
+  isLoginLoading: false,
   error: null,
 };
 
@@ -35,6 +36,7 @@ export const checkSession = createAsyncThunk<
     const response = await fetchSession();
 
     if (!response.ok) {
+      console.log("Session check failed with status:", response.status);
       return rejectWithValue("Session check not okay: " + response.statusText);
     }
 
@@ -46,6 +48,30 @@ export const checkSession = createAsyncThunk<
   }
 });
 
+export const logIn = createAsyncThunk<
+  User,
+  { username: string; password: string },
+  { rejectValue: string }
+>("auth/logIn", async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await login(credentials.username, credentials.password);
+
+    if (!response.ok) {
+      const errorText = await response.json();
+      console.log("Login failed with status:", response.status, "and message:", errorText.message);
+      return rejectWithValue(
+        "Login failed: " + (errorText.message || response.statusText),
+      );
+    }
+
+    const data = await response.json();
+    console.log("Login response data:", data);
+    return data;
+  } catch (err) {
+    return rejectWithValue("Login error: " + err);
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -53,11 +79,7 @@ const authSlice = createSlice({
     clearError(state) {
       state.error = null;
     },
-    // Reducer below is for removal.
-    loginSuccess(state, action: PayloadAction<User>) {
-      state.isAuthenticated = true;
-      state.User = action.payload;
-    },
+
     logoutSuccess(state) {
       state.isAuthenticated = false;
       state.User = null;
@@ -67,23 +89,40 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     // Handle checkSession async thunk states
     builder.addCase(checkSession.pending, (state) => {
-      state.isLoading = true;
+      state.isSessionLoading = true;
       state.error = null;
     });
     builder.addCase(checkSession.fulfilled, (state, action) => {
       state.User = action.payload;
       state.isAuthenticated = Boolean(action.payload);
-      state.isLoading = false;
+      state.isSessionLoading = false;
       state.error = null;
     });
-    builder.addCase(checkSession.rejected, (state, action) => {
+    builder.addCase(checkSession.rejected, (state) => {
       state.isAuthenticated = false;
       state.User = null;
-      state.error = action.payload || "Unknown error during session check";
-      state.isLoading = false;
+      state.isSessionLoading = false;
+    });
+
+    // Handle logIn async thunk states
+    builder.addCase(logIn.pending, (state) => {
+      state.isLoginLoading = true;
+      state.error = null;
+    });
+    builder.addCase(logIn.fulfilled, (state, action) => {
+      state.User = action.payload;
+      state.isAuthenticated = true;
+      state.isLoginLoading = false;
+      state.error = null;
+    });
+    builder.addCase(logIn.rejected, (state, action) => {
+      state.isAuthenticated = false;
+      state.User = null;
+      state.isLoginLoading = false;
+      state.error = action.payload || "Unknown error during login";
     });
   },
 });
 
-export const { loginSuccess, logoutSuccess, clearError } = authSlice.actions;
+export const { logoutSuccess, clearError } = authSlice.actions;
 export default authSlice.reducer;

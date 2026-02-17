@@ -3,10 +3,10 @@ import { type LoginCredentials } from "@/features/auth/hooks/useLogin.ts";
 
 type LoginFormProps = {
   onLogin: (credentials: LoginCredentials) => void;
-  isLoading: boolean;
+  isLoginLoading: boolean;
 };
 
-export const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
+export const LoginForm = ({ onLogin, isLoginLoading }: LoginFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -49,9 +49,9 @@ export const LoginForm = ({ onLogin, isLoading }: LoginFormProps) => {
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={isLoading}
+            disabled={isLoginLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoginLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <hr className="my-4" />

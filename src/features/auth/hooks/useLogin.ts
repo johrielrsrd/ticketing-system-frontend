@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { login } from "@/features/auth/services/authApi";
-import { loginSuccess } from "@/features/auth/store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "@/core/store/store";
+import type { RootState } from "@/core/store/store";
+import { logIn } from "../store/authSlice";
+
 
 export type LoginCredentials = {
   username: string;
@@ -9,35 +10,12 @@ export type LoginCredentials = {
 };
 
 export const useLogin = () => {
-  const dispatch = useDispatch();
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const authState = useSelector((state: RootState) => state.auth);
 
-  const handleLogin = async (credentials: LoginCredentials) => {
-    const { username, password } = credentials;
-    setLoginError(null);
-    setIsLoading(true);
-
-    try {
-      const response = await login(username, password);
-
-      if (response.ok) {
-        dispatch(loginSuccess(username));
-      } else {
-        const errorText = await response.text();
-        setLoginError(errorText || "Invalid username or password");
-        setIsLoading(false);
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setLoginError("Log In Error: " + err.message);
-        setIsLoading(false);
-      } else {
-        setLoginError("Network error");
-        setIsLoading(false);
-      }
-    }
+  const handleLogin = (credentials: LoginCredentials) => {
+    dispatch(logIn(credentials));
   };
 
-  return { handleLogin, loginError, isLoading };
+  return { handleLogin, loginError: authState.error, isLoginLoading: authState.isLoginLoading };
 };

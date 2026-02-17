@@ -5,13 +5,12 @@ import { checkSession } from "@/features/auth/store/authSlice";
 
 export const useSessionChecker = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const isSessionLoading = useSelector(
-    (state: RootState) => state.auth.isLoading,
-  );
+
+  const authState = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    dispatch(checkSession());
-  }, [dispatch]);
+    if (!authState.isAuthenticated) dispatch(checkSession());
+  }, [dispatch, authState.isAuthenticated]);
 
-  return { isSessionLoading };
+  return { isAuthenticated: authState.isAuthenticated, isLoading: authState.isSessionLoading };
 };
