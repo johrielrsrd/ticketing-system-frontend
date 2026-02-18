@@ -26,6 +26,7 @@ export const register = (payload: RegisterPayload) =>
   apiFetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 

@@ -14,6 +14,11 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!firstName || !lastName || !email || !username || !password) {
+      return;
+    }
+
     onRegister({ firstName, lastName, email, username, password });
   };
 
@@ -34,6 +39,7 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
               className="form-control"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3">
@@ -46,6 +52,7 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
               className="form-control"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3">
@@ -58,6 +65,7 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3">
@@ -70,6 +78,7 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
               className="form-control"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3">
@@ -82,6 +91,7 @@ export const RegistrationForm = ({ onRegister }: RegistrationFormProps) => {
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <button className="btn btn-primary w-100" type="submit">
