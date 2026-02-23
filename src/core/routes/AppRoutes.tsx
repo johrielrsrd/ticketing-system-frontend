@@ -3,12 +3,18 @@ import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
 import TicketsPage from "@/features/tickets/pages/TicketsPage";
+import CsvUploadPage from "@/features/tickets/pages/CsvUploadPage";
 import { useSessionChecker } from "@/features/auth/hooks/useSessionChecker";
 
-export const AppRoutes = () => {
-  const { isAuthenticated, isLoading, hasCheckedSession } = useSessionChecker();
+type LoadingOverlayProps = {
+  show: boolean;
+  label?: string;
+};
 
-  const LoadingOverlay = ({ show, label }: { show: boolean; label?: string }) => {
+export const AppRoutes = () => {
+  const { isAuthenticated, hasCheckedSession } = useSessionChecker();
+
+  const LoadingOverlay = ({ show, label }: LoadingOverlayProps) => {
     if (!show) return null;
 
     return (
@@ -30,7 +36,7 @@ export const AppRoutes = () => {
     );
   };
 
-  if (isLoading && !hasCheckedSession) {
+  if (!hasCheckedSession) {
     return <LoadingOverlay show={true} label="Loading..." />;
   }
 
@@ -63,6 +69,19 @@ export const AppRoutes = () => {
             isAuthenticated ? (
               <TicketViewsLayout>
                 <TicketsPage mode="all-tickets" />
+              </TicketViewsLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+
+        <Route
+          path="/tickets/upload"
+          element={
+            isAuthenticated ? (
+              <TicketViewsLayout>
+                <CsvUploadPage />
               </TicketViewsLayout>
             ) : (
               <Navigate to="/" />

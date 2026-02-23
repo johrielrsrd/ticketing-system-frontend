@@ -24,7 +24,7 @@ export function Sidebar() {
   return (
     <aside
       className="d-flex flex-column border-end bg-white"
-      style={{ width: 260, minHeight: "100vh", position: "sticky", top: 0 }}
+      style={{ width: "260px", minWidth: "260px", maxWidth: "260px", minHeight: "100vh", position: "sticky", top: 0 }}
     >
       {/* Brand / Title */}
       <div className="px-3 py-3 border-bottom">
@@ -83,6 +83,20 @@ export function Sidebar() {
             >
               <span aria-hidden>📋</span>
               <span>All Tickets</span>
+            </NavLink>
+          </li>
+
+          <li className="nav-item">
+            <NavLink
+              to="/tickets/upload"
+              className={({ isActive }) =>
+                `nav-link d-flex align-items-center gap-2 ${
+                  isActive ? "active" : "text-dark"
+                }`
+              }
+            >
+              <span aria-hidden>📤</span>
+              <span>CSV Upload</span>
             </NavLink>
           </li>
         </ul>
