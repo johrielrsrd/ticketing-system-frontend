@@ -1,36 +1,19 @@
-import { useState, useEffect } from "react";
-import { fetchTickets } from "../services/ticketsApi";
-import { type Ticket } from "../types/types";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/core/store/store";
+import { loadTickets } from "../store/ticketSlice";
 
 export const useTicketsData = (mode: "my-tickets" | "all-tickets") => {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const ticketsState = useSelector((state: RootState) => state.tickets);
 
   useEffect(() => {
-    const loadTickets = async () => {
-      try {
-        setError(null);
-        const response = await fetchTickets(mode);
+    dispatch(loadTickets(mode));
+  }, [dispatch, mode]);
 
-        if (!response.ok) {
-          throw new Error("Unauthorized or failed to fetch tickets");
-        }
-
-        const data = await response.json();
-        setTickets(data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadTickets();
-  }, [mode]);
-
-  return { tickets, loading, error, setTickets };
+  return {
+    tickets: ticketsState.items,
+    loading: ticketsState.isLoading,
+    error: ticketsState.error,
+  };
 };

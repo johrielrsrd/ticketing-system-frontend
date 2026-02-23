@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { type TicketsPageProps, type Ticket } from "../types/types";
 import { useTicketsData } from "../hooks/useTicketsData";
 import { useTicketsFilter } from "../hooks/useTicketsFilter";
-import { useSolveRate } from "../../analytics/hooks/useSolveRate";
+// import { useSolveRate } from "../../analytics/hooks/useSolveRate";
 
 export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   const [sortColumn, setSortColumn] = useState<keyof Ticket | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const { tickets, loading, error, setTickets } = useTicketsData(mode);
+  const { tickets, loading, error } = useTicketsData(mode);
+  
   const {
     displayedTickets,
     searchQuery,
@@ -20,7 +21,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   } = useTicketsFilter({
     tickets,
   });
-  const { solveRate } = useSolveRate({ enabled: mode !== "all-tickets" });
+  // const { solveRate } = useSolveRate({ enabled: mode !== "all-tickets" });
 
   const statusBadgeClass = (status: string) => {
     switch (status) {
@@ -53,8 +54,15 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
       setSortDirection("asc");
     }
 
-    // Perform sorting
-    const sorted = [...tickets].sort((a, b) => {
+  };
+
+  const sortedTickets = useMemo(() => {
+    if (!sortColumn) return displayedTickets;
+
+    const column = sortColumn;
+    const direction = sortDirection;
+
+    return [...displayedTickets].sort((a, b) => {
       const valA = a[column];
       const valB = b[column];
 
@@ -75,9 +83,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
         ? String(valA).localeCompare(String(valB))
         : String(valB).localeCompare(String(valA));
     });
-
-    setTickets(sorted);
-  };
+  }, [displayedTickets, sortColumn, sortDirection]);
 
   if (loading)
     return (
@@ -110,7 +116,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
           <div className="h5 mb-1">
             {mode === "all-tickets" ? "All Tickets" : "My Tickets"}
           </div>
-          {solveRate && (
+          {/* {solveRate && (
             <div className="text-muted small">
               <strong className="text-dark">Solve Rate:</strong>{" "}
               {solveRate.solveRatePercentage.toFixed(2)}%
@@ -119,7 +125,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
                 ({solveRate.solvedCount} solved out of {solveRate.totalCount})
               </span>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="d-flex flex-wrap gap-2 justify-content-end">
@@ -169,7 +175,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
           ) : (
             <div
               className="table-responsive"
-              style={{ maxHeight: "78vh", overflowY: "auto" }}
+              style={{ maxHeight: "88vh", overflowY: "auto" }}
             >
               <table className="table table-hover align-middle mb-0">
                 <thead className="sticky-top bg-white border-bottom">
@@ -213,7 +219,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedTickets.map((ticket) => (
+                  {sortedTickets.map((ticket) => (
                     <tr key={ticket.ticketId}>
                       <td className="px-3 text-nowrap">{ticket.ticketId}</td>
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
