@@ -3,6 +3,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { fetchSession, login } from "../services/authApi";
+import type { RootState } from "@/core/store/store";
 
 type User = {
   username: string;
@@ -12,16 +13,18 @@ type User = {
 };
 
 type AuthState = {
-  User: User | null;
+  user: User | null;
   isAuthenticated: boolean;
+  hasCheckedSession: boolean;
   isSessionLoading: boolean;
   isLoginLoading: boolean;
   error: string | null;
 };
 
 const initialState: AuthState = {
-  User: null,
+  user: null,
   isAuthenticated: false,
+  hasCheckedSession: false,
   isSessionLoading: false,
   isLoginLoading: false,
   error: null,
@@ -82,7 +85,8 @@ const authSlice = createSlice({
 
     logoutSuccess(state) {
       state.isAuthenticated = false;
-      state.User = null;
+      state.user = null;
+      state.hasCheckedSession = true;
     },
   },
 
@@ -93,14 +97,16 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(checkSession.fulfilled, (state, action) => {
-      state.User = action.payload;
+      state.user = action.payload;
       state.isAuthenticated = Boolean(action.payload);
+      state.hasCheckedSession = true;
       state.isSessionLoading = false;
       state.error = null;
     });
     builder.addCase(checkSession.rejected, (state) => {
       state.isAuthenticated = false;
-      state.User = null;
+      state.user = null;
+      state.hasCheckedSession = true;
       state.isSessionLoading = false;
     });
 
@@ -110,14 +116,16 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(logIn.fulfilled, (state, action) => {
-      state.User = action.payload;
+      state.user = action.payload;
       state.isAuthenticated = true;
+      state.hasCheckedSession = true;
       state.isLoginLoading = false;
       state.error = null;
     });
     builder.addCase(logIn.rejected, (state, action) => {
       state.isAuthenticated = false;
-      state.User = null;
+      state.user = null;
+      state.hasCheckedSession = true;
       state.isLoginLoading = false;
       state.error = action.payload || "Unknown error during login";
     });
@@ -125,4 +133,11 @@ const authSlice = createSlice({
 });
 
 export const { logoutSuccess, clearError } = authSlice.actions;
+
+export const selectAuth = (state: RootState) => state.auth;
+export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated;
+export const selectIsSessionLoading = (state: RootState) => state.auth.isSessionLoading;
+export const selectHasCheckedSession = (state: RootState) => state.auth.hasCheckedSession;
+
 export default authSlice.reducer;

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
@@ -6,9 +6,7 @@ import TicketsPage from "@/features/tickets/pages/TicketsPage";
 import { useSessionChecker } from "@/features/auth/hooks/useSessionChecker";
 
 export const AppRoutes = () => {
-  const location = useLocation();
-
-  const { isAuthenticated, isLoading } = useSessionChecker();
+  const { isAuthenticated, isLoading, hasCheckedSession } = useSessionChecker();
 
   const LoadingOverlay = ({ show, label }: { show: boolean; label?: string }) => {
     if (!show) return null;
@@ -32,10 +30,12 @@ export const AppRoutes = () => {
     );
   };
 
+  if (isLoading && !hasCheckedSession) {
+    return <LoadingOverlay show={true} label="Loading..." />;
+  }
+
   return (
     <>
-      <LoadingOverlay show={isLoading && location.pathname === "/"} label="Loading..." />
-
       <Routes>
         <Route
           path="/"

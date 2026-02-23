@@ -1,16 +1,24 @@
 import type { AppDispatch, RootState } from "@/core/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { checkSession } from "@/features/auth/store/authSlice";
+import {
+  checkSession,
+  selectHasCheckedSession,
+  selectIsAuthenticated,
+  selectIsSessionLoading,
+} from "@/features/auth/store/authSlice";
 
 export const useSessionChecker = () => {
   const dispatch = useDispatch<AppDispatch>();
-
-  const authState = useSelector((state: RootState) => state.auth);
+  const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
+  const isLoading = useSelector((state: RootState) => selectIsSessionLoading(state));
+  const hasCheckedSession = useSelector((state: RootState) => selectHasCheckedSession(state));
 
   useEffect(() => {
-    if (!authState.isAuthenticated) dispatch(checkSession());
-  }, [dispatch, authState.isAuthenticated]);
+    if (!isAuthenticated && !hasCheckedSession && !isLoading) {
+      dispatch(checkSession());
+    }
+  }, [dispatch, hasCheckedSession, isAuthenticated, isLoading]);
 
-  return { isAuthenticated: authState.isAuthenticated, isLoading: authState.isSessionLoading };
+  return { isAuthenticated, isLoading, hasCheckedSession };
 };

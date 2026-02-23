@@ -1,36 +1,13 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { fetchCurrentUser } from "@/features/users/services/usersApi";
-import { logoutSuccess } from "@/features/auth/store/authSlice";
+import { logoutSuccess, selectCurrentUser } from "@/features/auth/store/authSlice";
 import { logout } from "@/features/auth/services/authApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/core/store/store";
 
 export function Sidebar() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<{
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetchCurrentUser();
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-          console.log("Fetched user info:", data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch user info:", err);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const user = useSelector((state: RootState) => selectCurrentUser(state));
 
   const handleLogout = async () => {
     try {
