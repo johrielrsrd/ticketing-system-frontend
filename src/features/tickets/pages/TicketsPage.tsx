@@ -85,6 +85,49 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
     });
   }, [displayedTickets, sortColumn, sortDirection]);
 
+  const exportTicketsToCsv = (rows: Ticket[]) => {
+    if (rows.length === 0) return;
+
+    const headers: Array<keyof Ticket> = [
+      "ticketId",
+      "priority",
+      "status",
+      "subject",
+      "description",
+      "createdAt",
+    ];
+
+    const escapeCsvValue = (value: unknown) => {
+      const stringValue = String(value ?? "");
+      if (/[",\n]/.test(stringValue)) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+      return stringValue;
+    };
+
+    const csvRows = [
+      headers.join(","),
+      ...rows.map((ticket) =>
+        headers.map((header) => escapeCsvValue(ticket[header])).join(",")
+      ),
+    ];
+
+    const blob = new Blob([csvRows.join("\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `tickets-${mode}-${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading)
     return (
       <div className="p-4">
@@ -129,6 +172,14 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
         </div>
 
         <div className="d-flex flex-wrap gap-2 justify-content-end">
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => exportTicketsToCsv(sortedTickets)}
+            disabled={sortedTickets.length === 0}
+          >
+            Export CSV
+          </button>
+
           <input
             className="form-control"
             placeholder="Search subject/description..."
