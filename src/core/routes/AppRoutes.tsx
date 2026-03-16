@@ -3,7 +3,7 @@ import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
 import TicketsPage from "@/features/tickets/pages/TicketsPage";
-import CsvUploadPage from "@/features/tickets/pages/CsvUploadPage";
+import CsvUploadPage from "@/features/data/pages/CsvUploadPage";
 import { useSessionChecker } from "@/features/auth/hooks/useSessionChecker";
 
 type LoadingOverlayProps = {

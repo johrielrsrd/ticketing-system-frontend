@@ -9,7 +9,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const { tickets, loading, error } = useTicketsData(mode);
-  
+
   const {
     displayedTickets,
     searchQuery,
@@ -53,7 +53,6 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
       setSortColumn(column);
       setSortDirection("asc");
     }
-
   };
 
   const sortedTickets = useMemo(() => {
@@ -72,7 +71,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
       }
 
       // Compare dates
-      if (column === "createdAt") {
+      if (column === "createdDate") {
         const dateA = new Date(valA).getTime();
         const dateB = new Date(valB).getTime();
         return direction === "asc" ? dateA - dateB : dateB - dateA;
@@ -94,7 +93,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
       "status",
       "subject",
       "description",
-      "createdAt",
+      "createdDate",
     ];
 
     const escapeCsvValue = (value: unknown) => {
@@ -108,7 +107,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
     const csvRows = [
       headers.join(","),
       ...rows.map((ticket) =>
-        headers.map((header) => escapeCsvValue(ticket[header])).join(",")
+        headers.map((header) => escapeCsvValue(ticket[header])).join(","),
       ),
     ];
 
@@ -120,7 +119,7 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
     link.href = url;
     link.setAttribute(
       "download",
-      `tickets-${mode}-${new Date().toISOString().slice(0, 10)}.csv`
+      `tickets-${mode}-${new Date().toISOString().slice(0, 10)}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -226,24 +225,29 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
           ) : (
             <div
               className="table-responsive"
-              style={{ maxHeight: "88vh", overflowY: "auto" }}
+              style={{
+                maxHeight: "88vh",
+                maxWidth: "155vh",
+                overflowY: "auto",
+                overflowX: "auto",
+              }}
             >
               <table className="table table-hover align-middle mb-0">
                 <thead className="sticky-top bg-white border-bottom">
                   <tr className="small text-uppercase text-muted">
                     <th
                       className="py-2 px-3 fw-semibold text-nowrap"
-                      onClick={() => sortTickets("ticketId")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      Ticket#
-                    </th>
-                    <th
-                      className="py-2 px-3 fw-semibold text-nowrap"
                       onClick={() => sortTickets("priority")}
                       style={{ cursor: "pointer" }}
                     >
                       Priority
+                    </th>
+                    <th
+                      className="py-2 px-3 fw-semibold text-nowrap"
+                      onClick={() => sortTickets("ticketId")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Ticket ID
                     </th>
                     <th
                       className="py-2 px-3 fw-semibold text-nowrap"
@@ -259,21 +263,43 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
                     >
                       Subject
                     </th>
-                    <th className="py-2 px-3 fw-semibold">Details</th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Assignee
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Requester
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Organization
+                    </th>
                     <th
                       className="py-2 px-3 fw-semibold text-nowrap"
-                      onClick={() => sortTickets("createdAt")}
+                      onClick={() => sortTickets("createdDate")}
                       style={{ cursor: "pointer" }}
                     >
-                      Created
+                      Created Date
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Solve Date
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Category
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Remarks
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">ETA</th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">Jira</th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      Jira Status
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedTickets.map((ticket) => (
                     <tr key={ticket.ticketId}>
-                      <td className="px-3 text-nowrap">{ticket.ticketId}</td>
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
+                      <td className="px-3 text-nowrap">{ticket.ticketId}</td>
                       <td className="px-3 text-nowrap">
                         <span
                           className={`badge rounded-pill px-2 py-1 ${statusBadgeClass(ticket.status)}`}
@@ -289,17 +315,18 @@ export default function TicketsPage({ mode = "my-tickets" }: TicketsPageProps) {
                           {ticket.subject}
                         </div>
                       </td>
-                      <td className="px-3">
-                        <div
-                          className="text-muted text-truncate"
-                          style={{ maxWidth: 520 }}
-                        >
-                          {ticket.description}
-                        </div>
+                      <td className="px-3 text-nowrap">{ticket.assignee}</td>
+                      <td className="px-3 text-nowrap">{ticket.requester}</td>
+                      <td className="px-3 text-nowrap">
+                        {ticket.organization}
                       </td>
                       <td className="px-3 text-nowrap text-muted">
-                        {new Date(ticket.createdAt).toLocaleDateString()}
+                        {ticket.createdDate}
                       </td>
+                      <td className="px-3 text-nowrap text-muted">
+                        {ticket.solvedDate}
+                      </td>
+                      <td className="px-3 text-nowrap">{ticket.category}</td>
                     </tr>
                   ))}
                 </tbody>

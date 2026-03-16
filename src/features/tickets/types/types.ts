@@ -8,7 +8,7 @@ export interface Ticket {
   description: string;
   status: string;
   priority: string;
-  createdAt: string;
+  createdDate: string;
 }
 
 export interface SolveRate {
