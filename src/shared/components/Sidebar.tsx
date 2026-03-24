@@ -44,7 +44,7 @@ export const Sidebar = () => {
         <ul className="nav nav-pills flex-column gap-1">
           <li className="nav-item">
             <NavLink
-              to="/"
+              to="/home"
               end
               className={({ isActive }) =>
                 `nav-link d-flex align-items-center gap-2 ${
@@ -59,7 +59,7 @@ export const Sidebar = () => {
 
           <li className="nav-item">
             <NavLink
-              to="/tickets"
+              to="/my-tickets"
               end
               className={({ isActive }) =>
                 `nav-link d-flex align-items-center gap-2 ${
@@ -88,7 +88,7 @@ export const Sidebar = () => {
 
           <li className="nav-item">
             <NavLink
-              to="/tickets/upload"
+              to="/data/upload"
               className={({ isActive }) =>
                 `nav-link d-flex align-items-center gap-2 ${
                   isActive ? "active" : "text-dark"
