@@ -2,9 +2,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
-import TicketsPage from "@/features/tickets/pages/TicketsPage";
+import { TicketsPage } from "@/features/tickets/pages/TicketsPage";
 import CsvUploadPage from "@/features/data/pages/CsvUploadPage";
 import { useSessionChecker } from "@/features/auth/hooks/useSessionChecker";
+import { HomePage } from "@/features/analytics/pages/HomePage";
 
 type LoadingOverlayProps = {
   show: boolean;
@@ -45,7 +46,15 @@ export const AppRoutes = () => {
       <Routes>
         <Route
           path="/"
-          element={!isAuthenticated ? <LogInPage /> : <Navigate to="/tickets" />}
+          element={
+            !isAuthenticated ? (
+              <LogInPage />
+            ) : (
+              <TicketViewsLayout>
+                <HomePage />
+              </TicketViewsLayout>
+            )
+          }
         />
 
         <Route path="/register" element={<RegistrationPage />} />
@@ -63,7 +72,7 @@ export const AppRoutes = () => {
           }
         />
 
-        <Route
+        {/* <Route
           path="/tickets/all"
           element={
             isAuthenticated ? (
@@ -74,7 +83,7 @@ export const AppRoutes = () => {
               <Navigate to="/" />
             )
           }
-        />
+        /> */}
 
         <Route
           path="/tickets/upload"

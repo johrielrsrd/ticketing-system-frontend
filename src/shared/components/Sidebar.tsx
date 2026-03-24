@@ -4,7 +4,7 @@ import { logout } from "@/features/auth/services/authApi";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/core/store/store";
 
-export function Sidebar() {
+export const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => selectCurrentUser(state));
@@ -72,7 +72,7 @@ export function Sidebar() {
             </NavLink>
           </li>
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <NavLink
               to="/tickets/all"
               className={({ isActive }) =>
@@ -84,7 +84,7 @@ export function Sidebar() {
               <span aria-hidden>📋</span>
               <span>All Tickets</span>
             </NavLink>
-          </li>
+          </li> */}
 
           <li className="nav-item">
             <NavLink
@@ -140,5 +140,3 @@ export function Sidebar() {
     </aside>
   );
 }
-
-export default Sidebar;

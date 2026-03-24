@@ -1,8 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchTickets } from "../services/ticketsApi";
-import type { Ticket } from "../types/types";
 
 type TicketsMode = "my-tickets" | "all-tickets";
+
+export interface Ticket {
+  priority: string;
+  ticketId: number;
+  status: string;
+  subject: string;
+  assignee: string;
+  requester: string;
+  organization: string;
+  createdDate: string;
+  solvedDate: string | null;
+  category: string;
+  remarks: string;
+  eta: string | null;
+  jiraTicketId: string;
+  jiraStatus: string;  
+}
 
 type TicketsState = {
   items: Ticket[];

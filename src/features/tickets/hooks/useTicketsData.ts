@@ -11,9 +11,30 @@ export const useTicketsData = (mode: "my-tickets" | "all-tickets") => {
     dispatch(loadTickets(mode));
   }, [dispatch, mode]);
 
+   const statusBadgeClass = (status: string) => {
+    switch (status) {
+      case "Open":
+        return "text-bg-danger";
+      case "New":
+        return "text-bg-warning";
+      case "Pending":
+        return "text-bg-info";
+      case "On Hold":
+        return "text-bg-dark";
+      case "Solved":
+        return "text-bg-success";
+      case "Closed":
+        return "text-bg-secondary";
+      default:
+        return "text-bg-secondary";
+    }
+  };
+
+
   return {
     tickets: ticketsState.items,
     loading: ticketsState.isLoading,
     error: ticketsState.error,
+    statusBadge: statusBadgeClass,
   };
 };
