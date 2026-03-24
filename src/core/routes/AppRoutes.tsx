@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { LogInPage } from "@/features/auth/pages/LogInPage";
 import { RegistrationPage } from "@/features/auth/pages/RegistrationPage";
 import { TicketViewsLayout } from "@/shared/layouts/TicketViewsLayout";
