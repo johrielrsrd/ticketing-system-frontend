@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/core/store/store";
 import { loadTickets } from "../store/ticketSlice";
 
-export const useTicketsData = (mode: "my-tickets" | "all-tickets") => {
+export const useTicketsData = () => {
   const dispatch = useDispatch<AppDispatch>();
   const ticketsState = useSelector((state: RootState) => state.tickets);
 
   useEffect(() => {
-    dispatch(loadTickets(mode));
-  }, [dispatch, mode]);
+    dispatch(loadTickets());
+  }, [dispatch]);
 
    const statusBadgeClass = (status: string) => {
     switch (status) {

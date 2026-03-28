@@ -1,11 +1,10 @@
 import { useTicketsData } from "../hooks/useTicketsData";
+import { useTicketSorting } from "../hooks/useTicketSorting";
 
-interface TicketsPageProps {
-  mode?: "my-tickets" | "all-tickets";
-}
-
-export const TicketsPage = ({ mode = "my-tickets" }: TicketsPageProps) => {
-  const { tickets, loading, error, statusBadge } = useTicketsData(mode);
+export const TicketsPage = () => {
+  const { tickets, loading, error, statusBadge } = useTicketsData();
+  const { sortedTickets, handleSort, getSortIndicator } =
+    useTicketSorting(tickets);
 
   if (loading)
     return (
@@ -35,9 +34,7 @@ export const TicketsPage = ({ mode = "my-tickets" }: TicketsPageProps) => {
       {/* Header */}
       <div className="d-flex flex-wrap gap-3 justify-content-between align-items-start align-items-md-center mb-3">
         <div className="d-flex flex-column">
-          <div className="h5 mb-1">
-            {mode === "all-tickets" ? "All Tickets" : "My Tickets"}
-          </div>
+          <div className="h5 mb-1">My Tickets</div>
         </div>
       </div>
 
@@ -59,65 +56,138 @@ export const TicketsPage = ({ mode = "my-tickets" }: TicketsPageProps) => {
               <table className="table table-hover align-middle mb-0">
                 <thead className="sticky-top bg-white border-bottom">
                   <tr className="small text-uppercase text-muted">
-                    <th
-                      className="py-2 px-3 fw-semibold text-nowrap"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Priority
-                    </th>
-                    <th
-                      className="py-2 px-3 fw-semibold text-nowrap"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Ticket ID
-                    </th>
-                    <th
-                      className="py-2 px-3 fw-semibold text-nowrap"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Status
-                    </th>
-                    <th
-                      className="py-2 px-3 fw-semibold"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Subject
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("priority")}
+                      >
+                        Priority {getSortIndicator("priority")}
+                      </button>
                     </th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Assignee
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("ticketId")}
+                      >
+                        Ticket ID {getSortIndicator("ticketId")}
+                      </button>
                     </th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Requester
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status {getSortIndicator("status")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("subject")}
+                      >
+                        Subject {getSortIndicator("subject")}
+                      </button>
                     </th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Organization
-                    </th>
-                    <th
-                      className="py-2 px-3 fw-semibold text-nowrap"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Created Date
-                    </th>
-                    <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Solve Date
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("assignee")}
+                      >
+                        Assignee {getSortIndicator("assignee")}
+                      </button>
                     </th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Category
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("requester")}
+                      >
+                        Requester {getSortIndicator("requester")}
+                      </button>
                     </th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Remarks
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("organization")}
+                      >
+                        Organization {getSortIndicator("organization")}
+                      </button>
                     </th>
-                    <th className="py-2 px-3 fw-semibold text-nowrap">ETA</th>
-                    <th className="py-2 px-3 fw-semibold text-nowrap">Jira</th>
                     <th className="py-2 px-3 fw-semibold text-nowrap">
-                      Jira Status
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("createdDate")}
+                      >
+                        Created Date {getSortIndicator("createdDate")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("solvedDate")}
+                      >
+                        Solve Date {getSortIndicator("solvedDate")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("category")}
+                      >
+                        Category {getSortIndicator("category")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("remarks")}
+                      >
+                        Remarks {getSortIndicator("remarks")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("eta")}
+                      >
+                        ETA {getSortIndicator("eta")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("jiraTicketId")}
+                      >
+                        Jira {getSortIndicator("jiraTicketId")}
+                      </button>
+                    </th>
+                    <th className="py-2 px-3 fw-semibold text-nowrap">
+                      <button
+                        type="button"
+                        className="btn btn-link p-0 text-decoration-none text-reset fw-semibold text-uppercase small"
+                        onClick={() => handleSort("jiraStatus")}
+                      >
+                        Jira Status {getSortIndicator("jiraStatus")}
+                      </button>
                     </th>
                   </tr>
                 </thead>
 
                 {/* Render sorted and filtered tickets */}
                 <tbody>
-                  {tickets.map((ticket) => (
+                  {sortedTickets.map((ticket) => (
                     <tr key={ticket.ticketId}>
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
                       <td className="px-3 text-nowrap">
