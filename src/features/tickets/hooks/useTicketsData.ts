@@ -32,7 +32,7 @@ export const useTicketsData = () => {
 
 
   return {
-    tickets: ticketsState.items,
+    tickets: ticketsState.ticketItems,
     loading: ticketsState.isLoading,
     error: ticketsState.error,
     statusBadge: statusBadgeClass,

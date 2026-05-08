@@ -1,7 +1,9 @@
 import { useTicketsData } from "../hooks/useTicketsData";
 import { useTicketSorting } from "../hooks/useTicketSorting";
+import { useNavigate } from "react-router-dom";
 
 export const TicketsPage = () => {
+  const navigate = useNavigate();
   const { tickets, loading, error, statusBadge } = useTicketsData();
   const { sortedTickets, handleSort, getSortIndicator } =
     useTicketSorting(tickets);
@@ -188,7 +190,10 @@ export const TicketsPage = () => {
                 {/* Render sorted and filtered tickets */}
                 <tbody>
                   {sortedTickets.map((ticket) => (
-                    <tr key={ticket.ticketId}>
+                    <tr key={ticket.ticketId}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate(`/tickets/${ticket.ticketId}`)}
+                    >
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
                       <td className="px-3 text-nowrap">
                         <a

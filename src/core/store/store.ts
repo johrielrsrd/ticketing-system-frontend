@@ -4,8 +4,8 @@ import ticketsReducer from "@/features/tickets/store/ticketSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer, // this key becomes state.auth
-    tickets: ticketsReducer,
+    auth: authReducer, // state.auth
+    tickets: ticketsReducer, //state.tickets
   },
 });
 

@@ -20,13 +20,13 @@ export interface Ticket {
 }
 
 type TicketsState = {
-  items: Ticket[];
+  ticketItems: Ticket[];
   isLoading: boolean;
   error: string | null;
 };
 
 const initialState: TicketsState = {
-  items: [],
+  ticketItems: [],
   isLoading: false,
   error: null,
 };
@@ -53,6 +53,10 @@ export const loadTickets = createAsyncThunk<
   }
 });
 
+export const selectTicketbyId = (state: { tickets: TicketsState }, ticketId: number) => {
+  return state.tickets.ticketItems.find((ticket) => ticket.ticketId === ticketId);
+};
+
 const ticketsSlice = createSlice({
   name: "tickets",
   initialState,
@@ -67,7 +71,7 @@ const ticketsSlice = createSlice({
       state.error = null;
     });
     builder.addCase(loadTickets.fulfilled, (state, action) => {
-      state.items = action.payload;
+      state.ticketItems = action.payload;
       state.isLoading = false;
       state.error = null;
     });

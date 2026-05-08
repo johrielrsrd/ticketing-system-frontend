@@ -8,6 +8,7 @@ import { HomePage } from "@/features/analytics/pages/HomePage";
 import { RequireAuth } from "@/features/auth/components/RequireAuth";
 import { RequireGuest } from "@/features/auth/components/RequireGuest";
 import { RootRedirect } from "@/features/auth/components/RootRedirect";
+import { TicketDetailPage } from "@/features/tickets/pages/TicketDetailPage";
 
 const AppLayout = () => (
   <TicketViewsLayout>
@@ -29,6 +30,7 @@ export const AppRoutes = () => {
         <Route element={<AppLayout />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/my-tickets" element={<TicketsPage />} />
+          <Route path="/tickets/:ticketId" element={<TicketDetailPage />} />
           <Route path="/data/upload" element={<CsvUploadPage />} />
         </Route>
       </Route>
