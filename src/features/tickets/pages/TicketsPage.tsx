@@ -190,9 +190,12 @@ export const TicketsPage = () => {
                 {/* Render sorted and filtered tickets */}
                 <tbody>
                   {sortedTickets.map((ticket) => (
-                    <tr key={ticket.ticketId}
+                    <tr
+                      key={ticket.ticketId}
                       style={{ cursor: "pointer" }}
-                      onClick={() => navigate(`/tickets/${ticket.ticketId}`)}
+                      onClick={() =>
+                        navigate(`/tickets/${ticket.ticketId}`)
+                      }
                     >
                       <td className="px-3 text-nowrap">{ticket.priority}</td>
                       <td className="px-3 text-nowrap">

@@ -53,10 +53,6 @@ export const loadTickets = createAsyncThunk<
   }
 });
 
-export const selectTicketbyId = (state: { tickets: TicketsState }, ticketId: number) => {
-  return state.tickets.ticketItems.find((ticket) => ticket.ticketId === ticketId);
-};
-
 const ticketsSlice = createSlice({
   name: "tickets",
   initialState,

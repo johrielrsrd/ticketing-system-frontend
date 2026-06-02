@@ -6,6 +6,12 @@ export const fetchTickets = () =>
     credentials: "include",
   });
 
+export const fetchTicketById = (ticketId: string | number) =>
+  apiFetch(`/api/tickets/${ticketId}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
 export const uploadTicketsCsv = (formData: FormData) =>
   apiFetch("/api/tickets/upload-csv", {
     method: "POST",
